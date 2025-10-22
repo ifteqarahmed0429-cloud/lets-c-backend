@@ -1,0 +1,20 @@
+{
+  "name": "lets-c-backend",
+  "version": "1.0.0",
+  "description": "Backend server for Let's C random video chat app",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "helmet": "^8.1.0",
+    "socket.io": "^4.8.1"
+  }
+}
