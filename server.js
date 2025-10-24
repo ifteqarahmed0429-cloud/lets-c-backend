@@ -154,6 +154,43 @@ async function addReport(reporterUserId, reportedUserId, reason = null) {
 
 // ----------------------------------------------------------
 
+// ==================================================
+// 🧑‍💼 ADMIN ROUTES — for internal monitoring
+// ==================================================
+function verifyAdmin(req, res, next) {
+  const adminKey = process.env.ADMIN_KEY;
+  if (!req.query.key || req.query.key !== adminKey) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
+  next();
+}
+
+// ✅ Health Check
+app.get("/admin/health", verifyAdmin, (req, res) => {
+  res.json({ ok: true, time: new Date().toISOString() });
+});
+
+// ✅ User Count
+app.get("/admin/users", verifyAdmin, async (req, res) => {
+  try {
+    const [rows] = await pool.query("SELECT COUNT(*) AS count FROM users");
+    res.json({ total_users: rows[0].count });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ✅ Active Sessions
+app.get("/admin/sessions", verifyAdmin, async (req, res) => {
+  try {
+    const [rows] = await pool.query(
+      "SELECT COUNT(*) AS active_sessions FROM sessions WHERE ended_at IS NULL"
+    );
+    res.json(rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // -------------------------------
 // 🔗 Socket.io Events
